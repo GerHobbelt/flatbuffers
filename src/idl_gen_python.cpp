@@ -1465,6 +1465,34 @@ class PythonGenerator : public BaseGenerator {
     code += GenIndents(2) + "return union";
   }
 
+  void GenUnionMappingForStruct(const EnumDef &enum_def, const EnumVal &ev,
+                                std::string *code_ptr) {
+    auto &code = *code_ptr;
+    auto union_name = NormalizedName(enum_def);
+    auto field_name = NormalizedName(ev);
+    auto field_type = GenTypeGet(ev.union_type) + "T";
+
+    code += GenIndents(1) + "if unionType == " + union_name + "()." +
+            field_name + ":";
+    if (parser_.opts.include_dependence_headers) {
+      auto package_reference = GenPackageReference(ev.union_type);
+      code += GenIndents(2) + "import " + package_reference;
+      field_type = package_reference + "." + field_type;
+    }
+    code += GenIndents(2) + "return " + field_type;
+  }
+
+  void GenUnionMappingForString(const EnumDef &enum_def, const EnumVal &ev,
+                                std::string *code_ptr) {
+    auto &code = *code_ptr;
+    auto union_name = NormalizedName(enum_def);
+    auto field_name = NormalizedName(ev);
+
+    code += GenIndents(1) + "if unionType == " + union_name + "()." +
+            field_name + ":";
+    code += GenIndents(2) + "return Table.String";
+  }
+
   // Creates an union object based on union type.
   void GenUnionCreator(const EnumDef &enum_def, std::string *code_ptr) {
     auto &code = *code_ptr;
@@ -1485,6 +1513,25 @@ class PythonGenerator : public BaseGenerator {
           break;
         case BASE_TYPE_STRING:
           GenUnionCreatorForString(enum_def, ev, &code);
+          break;
+        default: break;
+      }
+    }
+    code += GenIndents(1) + "return None";
+    code += "\n";
+
+    // Generate mapping from enum type to class
+    code += "def " + union_name + "Mapping(unionType):";
+
+    for (auto it = enum_def.Vals().begin(); it != enum_def.Vals().end(); ++it) {
+      auto &ev = **it;
+      // Union only supports string and table.
+      switch (ev.union_type.base_type) {
+        case BASE_TYPE_STRUCT:
+          GenUnionMappingForStruct(enum_def, ev, &code);
+          break;
+        case BASE_TYPE_STRING:
+          GenUnionMappingForString(enum_def, ev, &code);
           break;
         default: break;
       }
