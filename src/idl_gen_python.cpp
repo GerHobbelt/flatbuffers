@@ -74,6 +74,13 @@ class PythonGenerator : public BaseGenerator {
     code += "class " + class_name + "(object):\n";
   }
 
+  // Begin enum code with a class declaration.
+  void BeginActualEnum(const std::string &class_name, std::string *code_ptr) {
+    auto &code = *code_ptr;
+    code += "\nfrom enum import Enum\n";
+    code += "class " + class_name + "Enum(int, Enum):\n";
+  }
+
   std::string EscapeKeyword(const std::string &name) const {
     return keywords_.find(name) == keywords_.end() ? name : name + "_";
   }
@@ -1519,8 +1526,10 @@ class PythonGenerator : public BaseGenerator {
     }
     code += GenIndents(1) + "return None";
     code += "\n";
+    code += "\n";
 
     // Generate mapping from enum type to class
+    code += "\n";
     code += "def " + union_name + "Mapping(unionType):";
 
     for (auto it = enum_def.Vals().begin(); it != enum_def.Vals().end(); ++it) {
@@ -1552,6 +1561,16 @@ class PythonGenerator : public BaseGenerator {
       EnumMember(enum_def, ev, code_ptr);
     }
     EndEnum(code_ptr);
+
+    // Generate a real Python3 Enum
+    BeginActualEnum(NormalizedName(enum_def), code_ptr);
+    for (auto it = enum_def.Vals().begin(); it != enum_def.Vals().end(); ++it) {
+      auto &ev = **it;
+      GenComment(ev.doc_comment, code_ptr, &def_comment, Indent.c_str());
+      EnumMember(enum_def, ev, code_ptr);
+    }
+    EndEnum(code_ptr);
+
   }
 
   // Returns the function name that is able to read a value of the given type.
