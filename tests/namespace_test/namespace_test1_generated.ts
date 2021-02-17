@@ -8,7 +8,8 @@ export enum EnumInNestedNS{
   A= 0,
   B= 1,
   C= 2
-}};
+};
+}
 
 /**
  * @constructor
@@ -72,6 +73,13 @@ mutate_foo(value:number):boolean {
 };
 
 /**
+ * @returns string
+ */
+static getFullyQualifiedName():string {
+  return 'NamespaceA.NamespaceB.TableInNestedNS';
+}
+
+/**
  * @param flatbuffers.Builder builder
  */
 static startTableInNestedNS(builder:flatbuffers.Builder) {
@@ -100,6 +108,42 @@ static createTableInNestedNS(builder:flatbuffers.Builder, foo:number):flatbuffer
   TableInNestedNS.addFoo(builder, foo);
   return TableInNestedNS.endTableInNestedNS(builder);
 }
+
+/**
+ * @returns TableInNestedNST
+ */
+unpack(): TableInNestedNST {
+  return new TableInNestedNST(
+    this.foo()
+  );
+};
+
+/**
+ * @param TableInNestedNST _o
+ */
+unpackTo(_o: TableInNestedNST): void {
+  _o.foo = this.foo();
+};
+}
+
+export class TableInNestedNST {
+/**
+ * @constructor
+ * @param number foo
+ */
+constructor(
+  public foo: number = 0
+){};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @returns flatbuffers.Offset
+ */
+pack(builder:flatbuffers.Builder): flatbuffers.Offset {
+  return NamespaceA.NamespaceB.TableInNestedNS.createTableInNestedNS(builder,
+    this.foo
+  );
+};
 }
 }
 /**
@@ -133,13 +177,7 @@ a():number {
  * @returns boolean
  */
 mutate_a(value:number):boolean {
-  var offset = this.bb!.__offset(this.bb_pos, 0);
-
-  if (offset === 0) {
-    return false;
-  }
-
-  this.bb!.writeInt32(this.bb_pos + offset, value);
+  this.bb!.writeInt32(this.bb_pos + 0, value);
   return true;
 };
 
@@ -155,15 +193,23 @@ b():number {
  * @returns boolean
  */
 mutate_b(value:number):boolean {
-  var offset = this.bb!.__offset(this.bb_pos, 4);
-
-  if (offset === 0) {
-    return false;
-  }
-
-  this.bb!.writeInt32(this.bb_pos + offset, value);
+  this.bb!.writeInt32(this.bb_pos + 4, value);
   return true;
 };
+
+/**
+ * @returns string
+ */
+static getFullyQualifiedName():string {
+  return 'NamespaceA.NamespaceB.StructInNestedNS';
+}
+
+/**
+ * @returns number
+ */
+static sizeOf():number {
+  return 8;
+}
 
 /**
  * @param flatbuffers.Builder builder
@@ -178,5 +224,46 @@ static createStructInNestedNS(builder:flatbuffers.Builder, a: number, b: number)
   return builder.offset();
 };
 
+
+/**
+ * @returns StructInNestedNST
+ */
+unpack(): StructInNestedNST {
+  return new StructInNestedNST(
+    this.a(),
+    this.b()
+  );
+};
+
+/**
+ * @param StructInNestedNST _o
+ */
+unpackTo(_o: StructInNestedNST): void {
+  _o.a = this.a();
+  _o.b = this.b();
+};
+}
+
+export class StructInNestedNST {
+/**
+ * @constructor
+ * @param number a
+ * @param number b
+ */
+constructor(
+  public a: number = 0,
+  public b: number = 0
+){};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @returns flatbuffers.Offset
+ */
+pack(builder:flatbuffers.Builder): flatbuffers.Offset {
+  return NamespaceA.NamespaceB.StructInNestedNS.createStructInNestedNS(builder,
+    this.a,
+    this.b
+  );
+};
 }
 }

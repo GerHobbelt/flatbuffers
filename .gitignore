@@ -2,6 +2,7 @@
 *_wire.bin
 .DS_Store
 **/.build
+build
 **/Packages
 /*.xcodeproj
 **/xcuserdata/
@@ -72,6 +73,7 @@ tests/monsterdata_rust_wire.mon
 tests/unicode_test.mon
 tests/ts/
 tests/php/
+tests/js/
 CMakeLists.txt.user
 CMakeScripts/**
 CTestTestfile.cmake
@@ -122,6 +124,20 @@ dart/doc/api/
 Cargo.lock
 .corpus**
 .seed**
+.crash**
 grpc/google/
 **/Package.resolved
 .clangd/**
+package-lock.json
+/*.ilk
+/*.pdb
+.clwb
+js/**/*.js
+js/**/*.d.ts
+mjs/**/*.js
+mjs/**/*.d.ts
+yarn-error.log
+.cache/
+/flatbuffers.lib
+.cmake/
+**/dist
