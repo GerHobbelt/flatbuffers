@@ -21,6 +21,7 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
+#include <regex>
 
 #include "flatbuffers/code_generators.h"
 #include "flatbuffers/flatbuffers.h"
@@ -841,6 +842,7 @@ class PythonGenerator : public BaseGenerator {
                      std::set<std::string> *import_list) {
     std::string code;
     std::set<std::string> import_typing_list;
+    std::map<std::string, std::string> fields_and_types;
     for (auto it = struct_def.fields.vec.begin();
          it != struct_def.fields.vec.end(); ++it) {
       auto &field = **it;
@@ -874,7 +876,21 @@ class PythonGenerator : public BaseGenerator {
       auto field_instance_name = MakeLowerCamel(field);
       code += GenIndents(2) + "self." + field_instance_name + " = " +
               default_value + "  # type: " + field_type;
+      fields_and_types[field_instance_name] = field_type;
     }
+
+    //$MARK - Tesseract Modifications
+    code += "\n";
+    code += GenIndents(1) + "__field_names_map = {";
+    for( auto& x:fields_and_types) {
+         code += GenIndents(2);
+         code += "\"" + x.first + "\"";
+         code += ": ";
+         code += std::regex_replace(x.second, std::regex("Optional\\[([^\\]]+)\\]"), "$1");
+         code += ",";
+    }
+    code += GenIndents(1);
+    code += "}";
 
     // Writes __init__ method.
     auto &code_base = *code_ptr;
