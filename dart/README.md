@@ -2,10 +2,8 @@
 
 This package is used to read and write [FlatBuffers](https://google.github.io/flatbuffers/).
 
-Most consumers will want to use the [`flatc` - FlatBuffer compiler](https://github.com/google/flatbuffers) binary for your platform:
-* [Linux](https://github.com/google/flatbuffers/suites/4363603985/artifacts/114682272)
-* [macOS](https://github.com/google/flatbuffers/suites/4363603985/artifacts/114682273)
-* [Windows](https://github.com/google/flatbuffers/suites/4363603985/artifacts/114682274)
+Most consumers will want to use the [`flatc` - FlatBuffer compiler](https://github.com/google/flatbuffers) binary for your platform.
+You can download the flatc version matching your dart package version from [GitHub releases](https://github.com/google/flatbuffers/releases).
 
 The FlatBuffer compiler `flatc` reads a FlatBuffers IDL schema and generates Dart code.
 The generated classes can be used to read or write binary data/files that are interoperable with

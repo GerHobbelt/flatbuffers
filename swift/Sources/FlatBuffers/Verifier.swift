@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Google Inc. All rights reserved.
+ * Copyright 2024 Google Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -200,4 +200,14 @@ public struct Verifier {
   internal mutating func finish() {
     _depth -= 1
   }
+
+  mutating func verify(id: String) throws {
+    let size = MemoryLayout<Int32>.size
+    let str = _buffer.readString(at: size, count: size)
+    if id == str {
+      return
+    }
+    throw FlatbuffersErrors.bufferIdDidntMatchPassedId
+  }
+
 }
